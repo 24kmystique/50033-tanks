@@ -54,6 +54,11 @@ public class ShellExplosion : MonoBehaviour
         float damage = relativeDistance * m_MaxDamage;
         damage = Mathf.Max(0f, damage);
 
+        if (damage > m_MaxDamage)
+        {
+            Debug.Log("One shot kill");
+        }
+
         return damage;
     }
 

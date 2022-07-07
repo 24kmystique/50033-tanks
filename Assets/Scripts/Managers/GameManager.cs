@@ -34,10 +34,7 @@ public class GameManager : MonoBehaviour
         instructionsCanvas = GameObject.Find("InstructionsCanvas");
         mainCanvas = GameObject.Find("MainCanvas");
 
-        // SpawnAllTanks();
-        // SetCameraTargets();
         StartCoroutine(ShowInstructionsUI());
-        // StartCoroutine(GameLoop());
     }
 
 
@@ -86,11 +83,18 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ShowInstructionsUI()
     {
+        // Enable instruction UI
         instructionsCanvas.SetActive(true);
         mainCanvas.SetActive(false);
+
+        // Wait for user to press "space"
         while (!WaitingForUserInput()) yield return null;
+
+        // Disable instruction UI
         instructionsCanvas.SetActive(false);
         mainCanvas.SetActive(true);
+
+        // Proceed with spawning and starting the game
         SpawnAllTanks();
         SetCameraTargets();
         yield return null;

@@ -107,8 +107,6 @@ public class TankMovement : MonoBehaviour
     void  OnCollisionEnter(Collision col)
     {
         if (col.gameObject.CompareTag("HittableItem")){
-            Debug.Log("Hit");
-            // Destroy(col.gameObject);
             col.gameObject.SetActive(false);
             StartCoroutine(ApplyPower());
         }
