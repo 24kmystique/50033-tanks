@@ -21,18 +21,23 @@ public class GameManager : MonoBehaviour
     private WaitForSeconds m_StartWait;         
     private WaitForSeconds m_EndWait;           
     private TankManager m_RoundWinner;          
-    private TankManager m_GameWinner;           
+    private TankManager m_GameWinner; 
 
+    public GameObject mainCanvas;    
+    public GameObject instructionsCanvas;
+    public GameObject collectableItem;
 
     private void Start()
     {
         m_StartWait = new WaitForSeconds(m_StartDelay);
         m_EndWait = new WaitForSeconds(m_EndDelay);
+        instructionsCanvas = GameObject.Find("InstructionsCanvas");
+        mainCanvas = GameObject.Find("MainCanvas");
 
-        SpawnAllTanks();
-        SetCameraTargets();
-
-        StartCoroutine(GameLoop());
+        // SpawnAllTanks();
+        // SetCameraTargets();
+        StartCoroutine(ShowInstructionsUI());
+        // StartCoroutine(GameLoop());
     }
 
 
@@ -52,6 +57,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void SpawnCollectableItems()
+    {
+        Instantiate(collectableItem, new Vector3(Random.Range(15f, 40f), 1.5f, 27.0f), Quaternion.identity);
+        collectableItem.SetActive(true);
+    }
+
 
     private void SetCameraTargets()
     {
@@ -63,7 +74,6 @@ public class GameManager : MonoBehaviour
         m_CameraControl.m_Targets = targets;
     }
 
-
     private IEnumerator GameLoop()
     {
         yield return StartCoroutine(RoundStarting());
@@ -74,11 +84,37 @@ public class GameManager : MonoBehaviour
         else StartCoroutine(GameLoop());
     }
 
+    private IEnumerator ShowInstructionsUI()
+    {
+        instructionsCanvas.SetActive(true);
+        mainCanvas.SetActive(false);
+        while (!WaitingForUserInput()) yield return null;
+        instructionsCanvas.SetActive(false);
+        mainCanvas.SetActive(true);
+        SpawnAllTanks();
+        SetCameraTargets();
+        yield return null;
+        StartCoroutine(GameLoop());
+    }
+
+    private bool WaitingForUserInput()
+    {
+        if (Input.GetKeyDown("space"))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     private IEnumerator RoundStarting()
     {
         ResetAllTanks();
         DisableTankControl();
+
+        SpawnCollectableItems();
 
         m_CameraControl.SetStartPositionAndSize();
 

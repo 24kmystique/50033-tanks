@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class TankMovement : MonoBehaviour
 {
@@ -17,7 +22,9 @@ public class TankMovement : MonoBehaviour
     private Rigidbody m_Rigidbody;         
     private float m_MovementInputValue;    
     private float m_TurnInputValue;        
-    private float m_OriginalPitch;         
+    private float m_OriginalPitch;   
+
+    private int m_RandomValue;
 
 
     private void Awake()
@@ -95,5 +102,38 @@ public class TankMovement : MonoBehaviour
         float turn = m_TurnInputValue * m_TurnSpeed * Time.deltaTime;
         Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
         m_Rigidbody.MoveRotation(m_Rigidbody.rotation * turnRotation);
+    }
+
+    void  OnCollisionEnter(Collision col)
+    {
+        if (col.gameObject.CompareTag("HittableItem")){
+            Debug.Log("Hit");
+            // Destroy(col.gameObject);
+            col.gameObject.SetActive(false);
+            StartCoroutine(ApplyPower());
+        }
+    }
+
+    private IEnumerator ApplyPower()
+    {
+        m_RandomValue = Random.Range(0, 2);
+        switch (m_RandomValue)
+        {
+            // Decrease player's speed for 10 sec
+            case 0:
+                m_Speed = 3f;
+                yield return new WaitForSeconds(10);
+                m_Speed = 12f;
+                break;
+            // Increase player's speed for 10 sec
+            case 1:
+                m_Speed = 50f;
+                yield return new WaitForSeconds(10);
+                m_Speed = 12f;
+                break;
+            default:
+                break;
+        }
+        yield return null;
     }
 }
